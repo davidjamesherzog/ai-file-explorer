@@ -25,28 +25,28 @@ Tests are located in the `test/` directory and follow the naming convention `*.t
 ### Example: Basic Test
 
 ```typescript
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect } from 'vitest'
 
 describe('My Feature', () => {
   it('should work correctly', () => {
-    expect(1 + 1).toBe(2);
-  });
-});
+    expect(1 + 1).toBe(2)
+  })
+})
 ```
 
 ### Example: Component Test
 
 ```typescript
-import { describe, it, expect } from 'vitest';
-import { mount } from '@vue/test-utils';
-import MyComponent from 'src/components/MyComponent.vue';
+import { describe, it, expect } from 'vitest'
+import { mount } from '@vue/test-utils'
+import MyComponent from 'src/components/MyComponent.vue'
 
 describe('MyComponent', () => {
   it('should render correctly', () => {
-    const wrapper = mount(MyComponent);
-    expect(wrapper.text()).toContain('Expected text');
-  });
-});
+    const wrapper = mount(MyComponent)
+    expect(wrapper.text()).toContain('Expected text')
+  })
+})
 ```
 
 ## Configuration
@@ -64,13 +64,13 @@ The Vitest configuration is in `vitest.config.ts`. Key features:
 Quasar components are automatically available in tests thanks to the setup file:
 
 ```typescript
-import { mount } from '@vue/test-utils';
-import { QBtn } from 'quasar';
+import { mount } from '@vue/test-utils'
+import { QBtn } from 'quasar'
 
 const wrapper = mount({
   template: '<QBtn label="Click me" />',
   components: { QBtn },
-});
+})
 ```
 
 ## Best Practices

@@ -1,7 +1,7 @@
-import { defineConfig } from 'vitest/config';
-import vue from '@vitejs/plugin-vue';
-import { quasar } from '@quasar/vite-plugin';
-import { fileURLToPath } from 'node:url';
+import { defineConfig } from 'vitest/config'
+import vue from '@vitejs/plugin-vue'
+import { quasar } from '@quasar/vite-plugin'
+import { fileURLToPath } from 'node:url'
 
 export default defineConfig({
   plugins: [
@@ -40,4 +40,4 @@ export default defineConfig({
       stores: fileURLToPath(new URL('./src/stores', import.meta.url)),
     },
   },
-});
+})
