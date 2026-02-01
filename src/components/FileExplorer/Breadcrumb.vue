@@ -56,49 +56,49 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
-import { useFileExplorerStore } from 'src/stores/fileExplorer';
+import { computed } from 'vue'
+import { useFileExplorerStore } from 'src/stores/fileExplorer'
 
 defineOptions({
   name: 'FileExplorerBreadcrumb',
-});
+})
 
-const store = useFileExplorerStore();
+const store = useFileExplorerStore()
 
 interface PathSegment {
-  name: string;
-  path: string;
+  name: string
+  path: string
 }
 
 const pathSegments = computed<PathSegment[]>(() => {
-  if (!store.currentPath) return [];
+  if (!store.currentPath) return []
 
-  const parts = store.currentPath.split('/').filter((p) => p);
-  const segments: PathSegment[] = [];
+  const parts = store.currentPath.split('/').filter((p) => p)
+  const segments: PathSegment[] = []
 
   // Add root
   segments.push({
     name: '/',
     path: '/',
-  });
+  })
 
   // Add each path segment
-  let currentPath = '';
+  let currentPath = ''
   for (const part of parts) {
-    currentPath += `/${part}`;
+    currentPath += `/${part}`
     segments.push({
       name: part,
       path: currentPath,
-    });
+    })
   }
 
-  return segments;
-});
+  return segments
+})
 
 function navigateToSegment(index: number) {
-  const segment = pathSegments.value[index];
+  const segment = pathSegments.value[index]
   if (segment) {
-    store.navigateToDirectory(segment.path);
+    store.navigateToDirectory(segment.path)
   }
 }
 </script>

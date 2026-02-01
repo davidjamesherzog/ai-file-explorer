@@ -5,7 +5,7 @@
 </template>
 
 <script setup lang="ts">
-import FileExplorer from 'src/components/FileExplorer/FileExplorer.vue';
+import FileExplorer from 'src/components/FileExplorer/FileExplorer.vue'
 </script>
 
 <style scoped lang="scss">
