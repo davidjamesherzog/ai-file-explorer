@@ -1,11 +1,11 @@
-import { defineStore } from 'pinia';
+import { defineStore } from 'pinia'
 import type {
   FileItem,
   FileExplorerState,
   ViewMode,
   SortField,
   SortOrder,
-} from 'src/types/fileExplorer';
+} from 'src/types/fileExplorer'
 
 export const useFileExplorerStore = defineStore('fileExplorer', {
   state: (): FileExplorerState => ({
@@ -27,66 +27,66 @@ export const useFileExplorerStore = defineStore('fileExplorer', {
      * Get filtered and sorted items based on search query
      */
     filteredItems(): FileItem[] {
-      let items = [...this.items];
+      let items = [...this.items]
 
       // Apply search filter
       if (this.searchQuery) {
-        const query = this.searchQuery.toLowerCase();
-        items = items.filter((item) => item.name.toLowerCase().includes(query));
+        const query = this.searchQuery.toLowerCase()
+        items = items.filter((item) => item.name.toLowerCase().includes(query))
       }
 
       // Apply sorting
       items.sort((a, b) => {
-        let comparison = 0;
+        let comparison = 0
 
         // Always sort directories first
-        if (a.isDirectory && !b.isDirectory) return -1;
-        if (!a.isDirectory && b.isDirectory) return 1;
+        if (a.isDirectory && !b.isDirectory) return -1
+        if (!a.isDirectory && b.isDirectory) return 1
 
         // Then sort by the selected field
         switch (this.sortField) {
           case 'name':
             comparison = a.name.localeCompare(b.name, undefined, {
               sensitivity: 'base',
-            });
-            break;
+            })
+            break
           case 'size':
-            comparison = a.size - b.size;
-            break;
+            comparison = a.size - b.size
+            break
           case 'modified':
             comparison =
-              new Date(a.modified).getTime() - new Date(b.modified).getTime();
-            break;
+              new Date(a.modified).getTime() - new Date(b.modified).getTime()
+            break
           case 'type':
-            comparison = (a.extension || '').localeCompare(b.extension || '');
-            break;
+            comparison = (a.extension || '').localeCompare(b.extension || '')
+            break
         }
 
-        return this.sortOrder === 'asc' ? comparison : -comparison;
-      });
+        return this.sortOrder === 'asc' ? comparison : -comparison
+      })
 
-      return items;
+      return items
     },
 
     /**
      * Check if we can navigate back in history
      */
     canNavigateBack(): boolean {
-      return this.historyIndex > 0;
+      return this.historyIndex > 0
     },
 
     /**
      * Check if we can navigate forward in history
      */
     canNavigateForward(): boolean {
-      return this.historyIndex < this.history.length - 1;
+      return this.historyIndex < this.history.length - 1
     },
 
     /**
      * Check if we can navigate to parent directory
      */
     canNavigateUp(): boolean {
-      return this.currentPath !== '' && this.currentPath !== '/';
+      return this.currentPath !== '' && this.currentPath !== '/'
     },
   },
 
@@ -96,10 +96,10 @@ export const useFileExplorerStore = defineStore('fileExplorer', {
      */
     async initialize() {
       try {
-        const homePath = await window.fileSystem.getHomeDirectory();
-        await this.navigateToDirectory(homePath);
+        const homePath = await window.fileSystem.getHomeDirectory()
+        await this.navigateToDirectory(homePath)
       } catch (error) {
-        this.error = `Failed to initialize: ${(error as Error).message}`;
+        this.error = `Failed to initialize: ${(error as Error).message}`
       }
     },
 
@@ -107,14 +107,14 @@ export const useFileExplorerStore = defineStore('fileExplorer', {
      * Navigate to a specific directory
      */
     async navigateToDirectory(path: string) {
-      this.loading = true;
-      this.error = null;
+      this.loading = true
+      this.error = null
 
       try {
-        const contents = await window.fileSystem.readDirectory(path);
-        this.currentPath = contents.path;
-        this.items = contents.items;
-        this.selectedItems = [];
+        const contents = await window.fileSystem.readDirectory(path)
+        this.currentPath = contents.path
+        this.items = contents.items
+        this.selectedItems = []
 
         // Update history
         if (
@@ -122,15 +122,15 @@ export const useFileExplorerStore = defineStore('fileExplorer', {
           this.history[this.historyIndex] !== path
         ) {
           // Remove any forward history
-          this.history = this.history.slice(0, this.historyIndex + 1);
+          this.history = this.history.slice(0, this.historyIndex + 1)
           // Add new path to history
-          this.history.push(path);
-          this.historyIndex = this.history.length - 1;
+          this.history.push(path)
+          this.historyIndex = this.history.length - 1
         }
       } catch (error) {
-        this.error = `Failed to read directory: ${(error as Error).message}`;
+        this.error = `Failed to read directory: ${(error as Error).message}`
       } finally {
-        this.loading = false;
+        this.loading = false
       }
     },
 
@@ -138,51 +138,51 @@ export const useFileExplorerStore = defineStore('fileExplorer', {
      * Navigate to parent directory
      */
     async navigateUp() {
-      if (!this.canNavigateUp) return;
+      if (!this.canNavigateUp) return
 
       const parentPath =
-        this.currentPath.split('/').slice(0, -1).join('/') || '/';
-      await this.navigateToDirectory(parentPath);
+        this.currentPath.split('/').slice(0, -1).join('/') || '/'
+      await this.navigateToDirectory(parentPath)
     },
 
     /**
      * Navigate back in history
      */
     async navigateBack() {
-      if (!this.canNavigateBack) return;
+      if (!this.canNavigateBack) return
 
-      this.historyIndex--;
-      const path = this.history[this.historyIndex];
-      await this.loadDirectory(path);
+      this.historyIndex--
+      const path = this.history[this.historyIndex]
+      await this.loadDirectory(path)
     },
 
     /**
      * Navigate forward in history
      */
     async navigateForward() {
-      if (!this.canNavigateForward) return;
+      if (!this.canNavigateForward) return
 
-      this.historyIndex++;
-      const path = this.history[this.historyIndex];
-      await this.loadDirectory(path);
+      this.historyIndex++
+      const path = this.history[this.historyIndex]
+      await this.loadDirectory(path)
     },
 
     /**
      * Load directory without updating history
      */
     async loadDirectory(path: string) {
-      this.loading = true;
-      this.error = null;
+      this.loading = true
+      this.error = null
 
       try {
-        const contents = await window.fileSystem.readDirectory(path);
-        this.currentPath = contents.path;
-        this.items = contents.items;
-        this.selectedItems = [];
+        const contents = await window.fileSystem.readDirectory(path)
+        this.currentPath = contents.path
+        this.items = contents.items
+        this.selectedItems = []
       } catch (error) {
-        this.error = `Failed to read directory: ${(error as Error).message}`;
+        this.error = `Failed to read directory: ${(error as Error).message}`
       } finally {
-        this.loading = false;
+        this.loading = false
       }
     },
 
@@ -191,7 +191,7 @@ export const useFileExplorerStore = defineStore('fileExplorer', {
      */
     async refreshDirectory() {
       if (this.currentPath) {
-        await this.loadDirectory(this.currentPath);
+        await this.loadDirectory(this.currentPath)
       }
     },
 
@@ -200,14 +200,14 @@ export const useFileExplorerStore = defineStore('fileExplorer', {
      */
     selectItem(item: FileItem, multiSelect = false) {
       if (multiSelect) {
-        const index = this.selectedItems.findIndex((i) => i.path === item.path);
+        const index = this.selectedItems.findIndex((i) => i.path === item.path)
         if (index >= 0) {
-          this.selectedItems.splice(index, 1);
+          this.selectedItems.splice(index, 1)
         } else {
-          this.selectedItems.push(item);
+          this.selectedItems.push(item)
         }
       } else {
-        this.selectedItems = [item];
+        this.selectedItems = [item]
       }
     },
 
@@ -215,14 +215,14 @@ export const useFileExplorerStore = defineStore('fileExplorer', {
      * Clear selection
      */
     clearSelection() {
-      this.selectedItems = [];
+      this.selectedItems = []
     },
 
     /**
      * Select all items
      */
     selectAll() {
-      this.selectedItems = [...this.items];
+      this.selectedItems = [...this.items]
     },
 
     /**
@@ -230,11 +230,11 @@ export const useFileExplorerStore = defineStore('fileExplorer', {
      */
     async openItem(item: FileItem) {
       if (item.isDirectory) {
-        await this.navigateToDirectory(item.path);
+        await this.navigateToDirectory(item.path)
       } else {
-        const result = await window.fileSystem.openFile(item.path);
+        const result = await window.fileSystem.openFile(item.path)
         if (!result.success) {
-          this.error = result.error || 'Failed to open file';
+          this.error = result.error || 'Failed to open file'
         }
       }
     },
@@ -243,23 +243,23 @@ export const useFileExplorerStore = defineStore('fileExplorer', {
      * Create a new folder
      */
     async createFolder(name: string) {
-      this.loading = true;
-      this.error = null;
+      this.loading = true
+      this.error = null
 
       try {
         const result = await window.fileSystem.createFolder(
           this.currentPath,
           name
-        );
+        )
         if (result.success) {
-          await this.refreshDirectory();
+          await this.refreshDirectory()
         } else {
-          this.error = result.error || 'Failed to create folder';
+          this.error = result.error || 'Failed to create folder'
         }
       } catch (error) {
-        this.error = `Failed to create folder: ${(error as Error).message}`;
+        this.error = `Failed to create folder: ${(error as Error).message}`
       } finally {
-        this.loading = false;
+        this.loading = false
       }
     },
 
@@ -267,30 +267,30 @@ export const useFileExplorerStore = defineStore('fileExplorer', {
      * Delete selected items
      */
     async deleteSelected() {
-      if (this.selectedItems.length === 0) return;
+      if (this.selectedItems.length === 0) return
 
-      this.loading = true;
-      this.error = null;
+      this.loading = true
+      this.error = null
 
       try {
-        const errors: string[] = [];
+        const errors: string[] = []
 
         for (const item of this.selectedItems) {
-          const result = await window.fileSystem.deleteItem(item.path);
+          const result = await window.fileSystem.deleteItem(item.path)
           if (!result.success) {
-            errors.push(`${item.name}: ${result.error}`);
+            errors.push(`${item.name}: ${result.error}`)
           }
         }
 
         if (errors.length > 0) {
-          this.error = `Failed to delete some items:\n${errors.join('\n')}`;
+          this.error = `Failed to delete some items:\n${errors.join('\n')}`
         }
 
-        await this.refreshDirectory();
+        await this.refreshDirectory()
       } catch (error) {
-        this.error = `Failed to delete items: ${(error as Error).message}`;
+        this.error = `Failed to delete items: ${(error as Error).message}`
       } finally {
-        this.loading = false;
+        this.loading = false
       }
     },
 
@@ -298,22 +298,22 @@ export const useFileExplorerStore = defineStore('fileExplorer', {
      * Rename an item
      */
     async renameItem(item: FileItem, newName: string) {
-      this.loading = true;
-      this.error = null;
+      this.loading = true
+      this.error = null
 
       try {
-        const newPath = item.path.replace(item.name, newName);
-        const result = await window.fileSystem.renameItem(item.path, newPath);
+        const newPath = item.path.replace(item.name, newName)
+        const result = await window.fileSystem.renameItem(item.path, newPath)
 
         if (result.success) {
-          await this.refreshDirectory();
+          await this.refreshDirectory()
         } else {
-          this.error = result.error || 'Failed to rename item';
+          this.error = result.error || 'Failed to rename item'
         }
       } catch (error) {
-        this.error = `Failed to rename item: ${(error as Error).message}`;
+        this.error = `Failed to rename item: ${(error as Error).message}`
       } finally {
-        this.loading = false;
+        this.loading = false
       }
     },
 
@@ -321,31 +321,31 @@ export const useFileExplorerStore = defineStore('fileExplorer', {
      * Copy selected items to a destination
      */
     async copyItems(destination: string) {
-      if (this.selectedItems.length === 0) return;
+      if (this.selectedItems.length === 0) return
 
-      this.loading = true;
-      this.error = null;
+      this.loading = true
+      this.error = null
 
       try {
-        const errors: string[] = [];
+        const errors: string[] = []
 
         for (const item of this.selectedItems) {
-          const destPath = `${destination}/${item.name}`;
-          const result = await window.fileSystem.copyItem(item.path, destPath);
+          const destPath = `${destination}/${item.name}`
+          const result = await window.fileSystem.copyItem(item.path, destPath)
           if (!result.success) {
-            errors.push(`${item.name}: ${result.error}`);
+            errors.push(`${item.name}: ${result.error}`)
           }
         }
 
         if (errors.length > 0) {
-          this.error = `Failed to copy some items:\n${errors.join('\n')}`;
+          this.error = `Failed to copy some items:\n${errors.join('\n')}`
         }
 
-        await this.refreshDirectory();
+        await this.refreshDirectory()
       } catch (error) {
-        this.error = `Failed to copy items: ${(error as Error).message}`;
+        this.error = `Failed to copy items: ${(error as Error).message}`
       } finally {
-        this.loading = false;
+        this.loading = false
       }
     },
 
@@ -353,9 +353,9 @@ export const useFileExplorerStore = defineStore('fileExplorer', {
      * Show item in system file manager
      */
     async showInFolder(item: FileItem) {
-      const result = await window.fileSystem.showInFolder(item.path);
+      const result = await window.fileSystem.showInFolder(item.path)
       if (!result.success) {
-        this.error = result.error || 'Failed to show in folder';
+        this.error = result.error || 'Failed to show in folder'
       }
     },
 
@@ -363,22 +363,22 @@ export const useFileExplorerStore = defineStore('fileExplorer', {
      * Set view mode
      */
     setViewMode(mode: ViewMode) {
-      this.viewMode = mode;
+      this.viewMode = mode
     },
 
     /**
      * Set sort field and order
      */
     setSorting(field: SortField, order?: SortOrder) {
-      this.sortField = field;
+      this.sortField = field
       if (order) {
-        this.sortOrder = order;
+        this.sortOrder = order
       } else {
         // Toggle order if same field
         if (this.sortField === field) {
-          this.sortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc';
+          this.sortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc'
         } else {
-          this.sortOrder = 'asc';
+          this.sortOrder = 'asc'
         }
       }
     },
@@ -387,30 +387,30 @@ export const useFileExplorerStore = defineStore('fileExplorer', {
      * Set search query
      */
     setSearchQuery(query: string) {
-      this.searchQuery = query;
+      this.searchQuery = query
     },
 
     /**
      * Navigate to a special directory
      */
     async navigateToHome() {
-      const path = await window.fileSystem.getHomeDirectory();
-      await this.navigateToDirectory(path);
+      const path = await window.fileSystem.getHomeDirectory()
+      await this.navigateToDirectory(path)
     },
 
     async navigateToDesktop() {
-      const path = await window.fileSystem.getDesktopDirectory();
-      await this.navigateToDirectory(path);
+      const path = await window.fileSystem.getDesktopDirectory()
+      await this.navigateToDirectory(path)
     },
 
     async navigateToDocuments() {
-      const path = await window.fileSystem.getDocumentsDirectory();
-      await this.navigateToDirectory(path);
+      const path = await window.fileSystem.getDocumentsDirectory()
+      await this.navigateToDirectory(path)
     },
 
     async navigateToDownloads() {
-      const path = await window.fileSystem.getDownloadsDirectory();
-      await this.navigateToDirectory(path);
+      const path = await window.fileSystem.getDownloadsDirectory()
+      await this.navigateToDirectory(path)
     },
   },
-});
+})

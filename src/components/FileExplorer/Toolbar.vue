@@ -148,55 +148,55 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import { useFileExplorerStore } from 'src/stores/fileExplorer';
-import { useQuasar } from 'quasar';
+import { ref } from 'vue'
+import { useFileExplorerStore } from 'src/stores/fileExplorer'
+import { useQuasar } from 'quasar'
 
 defineOptions({
   name: 'FileExplorerToolbar',
-});
+})
 
-const store = useFileExplorerStore();
-const $q = useQuasar();
+const store = useFileExplorerStore()
+const $q = useQuasar()
 
-const showCreateFolderDialog = ref(false);
-const newFolderName = ref('');
-const showDeleteDialog = ref(false);
+const showCreateFolderDialog = ref(false)
+const newFolderName = ref('')
+const showDeleteDialog = ref(false)
 
 async function handleCreateFolder() {
   if (!newFolderName.value.trim()) {
     $q.notify({
       type: 'warning',
       message: 'Please enter a folder name',
-    });
-    return;
+    })
+    return
   }
 
-  await store.createFolder(newFolderName.value);
-  newFolderName.value = '';
-  showCreateFolderDialog.value = false;
+  await store.createFolder(newFolderName.value)
+  newFolderName.value = ''
+  showCreateFolderDialog.value = false
 
   if (!store.error) {
     $q.notify({
       type: 'positive',
       message: 'Folder created successfully',
-    });
+    })
   }
 }
 
 function handleDelete() {
-  showDeleteDialog.value = true;
+  showDeleteDialog.value = true
 }
 
 async function confirmDelete() {
-  showDeleteDialog.value = false;
-  await store.deleteSelected();
+  showDeleteDialog.value = false
+  await store.deleteSelected()
 
   if (!store.error) {
     $q.notify({
       type: 'positive',
       message: 'Items deleted successfully',
-    });
+    })
   }
 }
 </script>

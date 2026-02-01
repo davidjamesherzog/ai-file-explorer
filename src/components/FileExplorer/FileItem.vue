@@ -23,22 +23,22 @@
 </template>
 
 <script setup lang="ts">
-import type { FileItem as FileItemType } from 'src/types/fileExplorer';
-import { getFileIcon, getFileIconColor } from 'src/utils/fileIcons';
-import { formatFileSize } from 'src/utils/fileFormatters';
+import type { FileItem as FileItemType } from 'src/types/fileExplorer'
+import { getFileIcon, getFileIconColor } from 'src/utils/fileIcons'
+import { formatFileSize } from 'src/utils/fileFormatters'
 
 interface Props {
-  item: FileItemType;
-  selected?: boolean;
+  item: FileItemType
+  selected?: boolean
 }
 
-defineProps<Props>();
+defineProps<Props>()
 
 defineEmits<{
-  click: [event: MouseEvent];
-  dblclick: [];
-  contextmenu: [event: MouseEvent];
-}>();
+  click: [event: MouseEvent]
+  dblclick: []
+  contextmenu: [event: MouseEvent]
+}>()
 </script>
 
 <style scoped lang="scss">

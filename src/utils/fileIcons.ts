@@ -3,21 +3,21 @@
  */
 
 export function getFileIcon(item: {
-  isDirectory: boolean;
-  extension?: string;
+  isDirectory: boolean
+  extension?: string
 }): string {
   if (item.isDirectory) {
-    return 'folder';
+    return 'folder'
   }
 
-  const ext = item.extension?.toLowerCase();
+  const ext = item.extension?.toLowerCase()
 
   // Document files
-  if (['.pdf'].includes(ext || '')) return 'picture_as_pdf';
-  if (['.doc', '.docx'].includes(ext || '')) return 'description';
-  if (['.xls', '.xlsx', '.csv'].includes(ext || '')) return 'table_chart';
-  if (['.ppt', '.pptx'].includes(ext || '')) return 'slideshow';
-  if (['.txt', '.md', '.markdown'].includes(ext || '')) return 'article';
+  if (['.pdf'].includes(ext || '')) return 'picture_as_pdf'
+  if (['.doc', '.docx'].includes(ext || '')) return 'description'
+  if (['.xls', '.xlsx', '.csv'].includes(ext || '')) return 'table_chart'
+  if (['.ppt', '.pptx'].includes(ext || '')) return 'slideshow'
+  if (['.txt', '.md', '.markdown'].includes(ext || '')) return 'article'
 
   // Image files
   if (
@@ -25,7 +25,7 @@ export function getFileIcon(item: {
       ext || ''
     )
   )
-    return 'image';
+    return 'image'
 
   // Video files
   if (
@@ -33,7 +33,7 @@ export function getFileIcon(item: {
       ext || ''
     )
   )
-    return 'movie';
+    return 'movie'
 
   // Audio files
   if (
@@ -41,71 +41,71 @@ export function getFileIcon(item: {
       ext || ''
     )
   )
-    return 'audio_file';
+    return 'audio_file'
 
   // Archive files
   if (['.zip', '.rar', '.7z', '.tar', '.gz', '.bz2'].includes(ext || ''))
-    return 'folder_zip';
+    return 'folder_zip'
 
   // Code files
   if (['.js', '.ts', '.jsx', '.tsx', '.vue'].includes(ext || ''))
-    return 'javascript';
-  if (['.html', '.htm', '.xml'].includes(ext || '')) return 'html';
-  if (['.css', '.scss', '.sass', '.less'].includes(ext || '')) return 'css';
+    return 'javascript'
+  if (['.html', '.htm', '.xml'].includes(ext || '')) return 'html'
+  if (['.css', '.scss', '.sass', '.less'].includes(ext || '')) return 'css'
   if (['.json', '.yaml', '.yml', '.toml'].includes(ext || ''))
-    return 'data_object';
-  if (['.py'].includes(ext || '')) return 'code';
-  if (['.java', '.class', '.jar'].includes(ext || '')) return 'code';
-  if (['.c', '.cpp', '.h', '.hpp'].includes(ext || '')) return 'code';
-  if (['.sh', '.bash', '.zsh'].includes(ext || '')) return 'terminal';
+    return 'data_object'
+  if (['.py'].includes(ext || '')) return 'code'
+  if (['.java', '.class', '.jar'].includes(ext || '')) return 'code'
+  if (['.c', '.cpp', '.h', '.hpp'].includes(ext || '')) return 'code'
+  if (['.sh', '.bash', '.zsh'].includes(ext || '')) return 'terminal'
 
   // Executable files
   if (['.exe', '.app', '.dmg', '.deb', '.rpm'].includes(ext || ''))
-    return 'settings_applications';
+    return 'settings_applications'
 
   // Default file icon
-  return 'insert_drive_file';
+  return 'insert_drive_file'
 }
 
 export function getFileIconColor(item: {
-  isDirectory: boolean;
-  extension?: string;
+  isDirectory: boolean
+  extension?: string
 }): string {
   if (item.isDirectory) {
-    return 'primary';
+    return 'primary'
   }
 
-  const ext = item.extension?.toLowerCase();
+  const ext = item.extension?.toLowerCase()
 
   // Color coding for different file types
-  if (['.pdf'].includes(ext || '')) return 'red';
-  if (['.doc', '.docx'].includes(ext || '')) return 'blue';
-  if (['.xls', '.xlsx', '.csv'].includes(ext || '')) return 'green';
-  if (['.ppt', '.pptx'].includes(ext || '')) return 'orange';
+  if (['.pdf'].includes(ext || '')) return 'red'
+  if (['.doc', '.docx'].includes(ext || '')) return 'blue'
+  if (['.xls', '.xlsx', '.csv'].includes(ext || '')) return 'green'
+  if (['.ppt', '.pptx'].includes(ext || '')) return 'orange'
 
   if (
     ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.svg', '.webp', '.ico'].includes(
       ext || ''
     )
   )
-    return 'purple';
+    return 'purple'
 
   if (
     ['.mp4', '.avi', '.mov', '.wmv', '.flv', '.mkv', '.webm'].includes(
       ext || ''
     )
   )
-    return 'pink';
+    return 'pink'
 
   if (
     ['.mp3', '.wav', '.flac', '.aac', '.ogg', '.wma', '.m4a'].includes(
       ext || ''
     )
   )
-    return 'teal';
+    return 'teal'
 
   if (['.zip', '.rar', '.7z', '.tar', '.gz', '.bz2'].includes(ext || ''))
-    return 'amber';
+    return 'amber'
 
   if (
     [
@@ -123,7 +123,7 @@ export function getFileIconColor(item: {
       '.cpp',
     ].includes(ext || '')
   )
-    return 'indigo';
+    return 'indigo'
 
-  return 'grey';
+  return 'grey'
 }

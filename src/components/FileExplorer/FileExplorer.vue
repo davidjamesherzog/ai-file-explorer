@@ -43,17 +43,17 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted } from 'vue';
-import { useFileExplorerStore } from 'src/stores/fileExplorer';
-import Toolbar from './Toolbar.vue';
-import Breadcrumb from './Breadcrumb.vue';
-import FileList from './FileList.vue';
+import { onMounted } from 'vue'
+import { useFileExplorerStore } from 'src/stores/fileExplorer'
+import Toolbar from './Toolbar.vue'
+import Breadcrumb from './Breadcrumb.vue'
+import FileList from './FileList.vue'
 
-const store = useFileExplorerStore();
+const store = useFileExplorerStore()
 
 onMounted(async () => {
-  await store.initialize();
-});
+  await store.initialize()
+})
 </script>
 
 <style scoped lang="scss">

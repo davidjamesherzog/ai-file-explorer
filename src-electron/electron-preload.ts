@@ -8,8 +8,8 @@
  * in package.json > dependencies and NOT in devDependencies
  */
 
-import { contextBridge, ipcRenderer } from 'electron';
-import type { FileSystemAPI } from './electron-types';
+import { contextBridge, ipcRenderer } from 'electron'
+import type { FileSystemAPI } from './electron-types'
 
 /**
  * Expose file system API to renderer process
@@ -30,13 +30,13 @@ const fileSystemAPI: FileSystemAPI = {
   getDesktopDirectory: () => ipcRenderer.invoke('fs:getDesktopDirectory'),
   getDocumentsDirectory: () => ipcRenderer.invoke('fs:getDocumentsDirectory'),
   getDownloadsDirectory: () => ipcRenderer.invoke('fs:getDownloadsDirectory'),
-};
+}
 
-contextBridge.exposeInMainWorld('fileSystem', fileSystemAPI);
+contextBridge.exposeInMainWorld('fileSystem', fileSystemAPI)
 
 // TypeScript declaration for window object
 declare global {
   interface Window {
-    fileSystem: FileSystemAPI;
+    fileSystem: FileSystemAPI
   }
 }

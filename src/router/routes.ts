@@ -1,4 +1,4 @@
-import { RouteRecordRaw } from 'vue-router';
+import { RouteRecordRaw } from 'vue-router'
 
 const routes: RouteRecordRaw[] = [
   {
@@ -16,6 +16,6 @@ const routes: RouteRecordRaw[] = [
     path: '/:catchAll(.*)*',
     component: () => import('pages/ErrorNotFound.vue'),
   },
-];
+]
 
-export default routes;
+export default routes

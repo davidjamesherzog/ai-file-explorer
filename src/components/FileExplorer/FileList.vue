@@ -157,20 +157,20 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import { useFileExplorerStore } from 'src/stores/fileExplorer';
-import { getFileIcon, getFileIconColor } from 'src/utils/fileIcons';
-import { formatFileSize, formatDate } from 'src/utils/fileFormatters';
-import type { FileItem as FileItemType } from 'src/types/fileExplorer';
-import FileItem from './FileItem.vue';
-import { useQuasar } from 'quasar';
+import { ref } from 'vue'
+import { useFileExplorerStore } from 'src/stores/fileExplorer'
+import { getFileIcon, getFileIconColor } from 'src/utils/fileIcons'
+import { formatFileSize, formatDate } from 'src/utils/fileFormatters'
+import type { FileItem as FileItemType } from 'src/types/fileExplorer'
+import FileItem from './FileItem.vue'
+import { useQuasar } from 'quasar'
 
-const store = useFileExplorerStore();
-const $q = useQuasar();
+const store = useFileExplorerStore()
+const $q = useQuasar()
 
-const showRenameDialog = ref(false);
-const renameValue = ref('');
-const itemToRename = ref<FileItemType | null>(null);
+const showRenameDialog = ref(false)
+const renameValue = ref('')
+const itemToRename = ref<FileItemType | null>(null)
 
 const columns = [
   {
@@ -207,60 +207,60 @@ const columns = [
     field: 'actions',
     align: 'right' as const,
   },
-];
+]
 
 function handleSelection(details: {
-  rows: readonly FileItemType[];
-  keys: readonly string[];
-  added: boolean;
-  evt: Event;
+  rows: readonly FileItemType[]
+  keys: readonly string[]
+  added: boolean
+  evt: Event
 }) {
-  store.selectedItems = [...details.rows];
+  store.selectedItems = [...details.rows]
 }
 
 function handleItemClick(item: FileItemType, event: MouseEvent) {
-  store.selectItem(item, event.ctrlKey || event.metaKey);
+  store.selectItem(item, event.ctrlKey || event.metaKey)
 }
 
 function handleDoubleClick(item: FileItemType) {
-  store.openItem(item);
+  store.openItem(item)
 }
 
 function isSelected(item: FileItemType): boolean {
-  return store.selectedItems.some((i) => i.path === item.path);
+  return store.selectedItems.some((i) => i.path === item.path)
 }
 
 function showContextMenu(item: FileItemType, event: Event) {
-  event.preventDefault();
+  event.preventDefault()
   // Context menu is handled by the q-menu in the template
 }
 
 function handleOpen(item: FileItemType) {
-  store.openItem(item);
+  store.openItem(item)
 }
 
 function handleRename(item: FileItemType) {
-  itemToRename.value = item;
-  renameValue.value = item.name;
-  showRenameDialog.value = true;
+  itemToRename.value = item
+  renameValue.value = item.name
+  showRenameDialog.value = true
 }
 
 async function confirmRename() {
-  if (!itemToRename.value || !renameValue.value.trim()) return;
+  if (!itemToRename.value || !renameValue.value.trim()) return
 
-  await store.renameItem(itemToRename.value, renameValue.value);
-  showRenameDialog.value = false;
+  await store.renameItem(itemToRename.value, renameValue.value)
+  showRenameDialog.value = false
 
   if (!store.error) {
     $q.notify({
       type: 'positive',
       message: 'Item renamed successfully',
-    });
+    })
   }
 }
 
 function handleShowInFolder(item: FileItemType) {
-  store.showInFolder(item);
+  store.showInFolder(item)
 }
 
 async function handleDeleteItem(item: FileItemType) {
@@ -270,16 +270,16 @@ async function handleDeleteItem(item: FileItemType) {
     cancel: true,
     persistent: true,
   }).onOk(async () => {
-    store.selectItem(item);
-    await store.deleteSelected();
+    store.selectItem(item)
+    await store.deleteSelected()
 
     if (!store.error) {
       $q.notify({
         type: 'positive',
         message: 'Item deleted successfully',
-      });
+      })
     }
-  });
+  })
 }
 </script>
 
