@@ -2,6 +2,12 @@
 
 AI File Explorer has been built using Antigravity AI with the Quasar framework and Electron.
 
+## Install Quasar CLI
+
+```bash
+https://mercurius.dev/
+```
+
 ## Install the dependencies
 
 ```bash
