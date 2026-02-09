@@ -1,11 +1,5 @@
 import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest'
 import { FileSystemService } from './electron-file-service'
-import type {
-  FileItem,
-  DirectoryContents,
-  FileOperationResult,
-} from './electron-types'
-
 // Mock fs/promises
 vi.mock('fs/promises', () => ({
   readdir: vi.fn(),
@@ -149,7 +143,7 @@ describe('FileSystemService', () => {
       )
     })
 
-    /*test('should skip items that cannot be accessed', async () => {
+    test('should skip items that cannot be accessed', async () => {
       const mockDirPath = '/test/path'
       const mockItems = [
         {
@@ -174,11 +168,21 @@ describe('FileSystemService', () => {
 
       vi.mocked(fs.access).mockResolvedValue(undefined)
 
+      // Spy on console.warn to verify line 71 is called
+      const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {
+        /* mute */
+      })
+
       const result = await service.readDirectory(mockDirPath)
 
       expect(result.items).toHaveLength(1)
       expect(result.items[0].name).toBe('accessible.txt')
-    })*/
+      expect(warnSpy).toHaveBeenCalledWith(
+        expect.stringContaining('Could not access item: inaccessible.txt'),
+        expect.any(Error)
+      )
+      warnSpy.mockRestore()
+    })
 
     test('should set extension for files but not directories', async () => {
       const mockDirPath = '/test/path'
@@ -379,18 +383,29 @@ describe('FileSystemService', () => {
     test('should copy a directory recursively', async () => {
       const source = '/test/source-dir'
       const destination = '/test/dest-dir'
-      const mockStats = {
-        isDirectory: () => true,
-      }
+      const mockItems = [
+        { name: 'subfile.txt', isDirectory: () => false },
+        { name: 'subdir', isDirectory: () => true },
+      ]
 
-      vi.mocked(fs.stat).mockResolvedValue(mockStats as any)
+      vi.mocked(fs.stat).mockResolvedValue({ isDirectory: () => true } as any)
       vi.mocked(fs.mkdir).mockResolvedValue(undefined)
-      vi.mocked(fs.readdir).mockResolvedValue([])
+      // First readdir for source, second for subdir (empty)
+      vi.mocked(fs.readdir)
+        .mockResolvedValueOnce(mockItems as any)
+        .mockResolvedValueOnce([])
 
       const result = await service.copyItem(source, destination)
 
       expect(result.success).toBe(true)
       expect(fs.mkdir).toHaveBeenCalledWith(destination, { recursive: true })
+      expect(fs.mkdir).toHaveBeenCalledWith(expect.stringContaining('subdir'), {
+        recursive: true,
+      })
+      expect(fs.copyFile).toHaveBeenCalledWith(
+        expect.stringContaining('subfile.txt'),
+        expect.stringContaining('subfile.txt')
+      )
     })
 
     test('should return error when copy fails', async () => {

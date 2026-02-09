@@ -116,6 +116,45 @@ describe('electron-main', () => {
       'http://localhost:8080'
     )
     expect(browserWindowInstance.webContents.openDevTools).toHaveBeenCalled()
+
+    // Test IPC handlers execution
+    const handlers = vi.mocked(ipcMain.handle).mock.calls
+    for (const [, handler] of handlers) {
+      await (handler as (...args: any[]) => Promise<any>)({} as any, 'test-path', 'test-name')
+    }
+  })
+
+  test('should handle production mode and prevent devtools', async () => {
+    // Set to production mode (DEBUGGING is false/undefined)
+    delete process.env.DEBUGGING
+
+    await import('./electron-main')
+
+    const browserWindowInstance = vi.mocked(BrowserWindow).mock.results[0].value
+
+    // Find the 'devtools-opened' listener
+    const devtoolsOpenedCallback = vi.mocked(browserWindowInstance.webContents.on).mock.calls.find((call: unknown[]) => call[0] === 'devtools-opened')?.[1] as ((...args: any[]) => void) | undefined
+    expect(devtoolsOpenedCallback).toBeDefined()
+
+    if (devtoolsOpenedCallback) {
+      devtoolsOpenedCallback()
+      expect(browserWindowInstance.webContents.closeDevTools).toHaveBeenCalled()
+    }
+  })
+
+  test('should register all directory IPC handlers', async () => {
+    await import('./electron-main')
+
+    const expectedChannels = [
+      'fs:getHomeDirectory',
+      'fs:getDesktopDirectory',
+      'fs:getDocumentsDirectory',
+      'fs:getDownloadsDirectory'
+    ]
+
+    expectedChannels.forEach(channel => {
+      expect(ipcMain.handle).toHaveBeenCalledWith(channel, expect.any(Function))
+    })
   })
 
   test('should handle app activation', async () => {
