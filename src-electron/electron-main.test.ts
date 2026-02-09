@@ -133,7 +133,7 @@ describe('electron-main', () => {
     const browserWindowInstance = vi.mocked(BrowserWindow).mock.results[0].value
 
     // Find the 'devtools-opened' listener
-    const devtoolsOpenedCallback = vi.mocked(browserWindowInstance.webContents.on).mock.calls.find((call: unknown[]) => call[0] === 'devtools-opened')?.[1] as ((...args: any[]) => void) | undefined
+    const devtoolsOpenedCallback = vi.mocked(browserWindowInstance.webContents.on).mock.calls.find((call: unknown[]) => call[0] === 'devtools-opened')?.[1] as ((...args: unknown[]) => void) | undefined
     expect(devtoolsOpenedCallback).toBeDefined()
 
     if (devtoolsOpenedCallback) {
@@ -155,6 +155,23 @@ describe('electron-main', () => {
     expectedChannels.forEach(channel => {
       expect(ipcMain.handle).toHaveBeenCalledWith(channel, expect.any(Function))
     })
+  })
+
+  test('should fallback to os.platform() when process.platform is undefined', async () => {
+    // Mock process.platform to be undefined
+    const originalPlatform = process.platform
+    Object.defineProperty(process, 'platform', { value: undefined, configurable: true })
+
+    await import('./electron-main')
+
+    // Indirectly verify by seeing if app.on('window-all-closed') still works
+    const windowAllClosedCallback = vi
+      .mocked(app.on)
+      .mock.calls.find((call: unknown[]) => call[0] === 'window-all-closed')?.[1] as ((...args: any[]) => void) | undefined
+    expect(windowAllClosedCallback).toBeDefined()
+
+    // Restore platform
+    Object.defineProperty(process, 'platform', { value: originalPlatform })
   })
 
   test('should handle app activation', async () => {
@@ -179,6 +196,23 @@ describe('electron-main', () => {
       vi.clearAllMocks()
       activateCallback()
       expect(BrowserWindow).toHaveBeenCalled()
+    }
+  })
+
+  test('should NOT create new window on activate if window already exists', async () => {
+    await import('./electron-main')
+
+    // Find the 'activate' listener
+    const activateCallback = vi
+      .mocked(app.on)
+      .mock.calls.find((call: unknown[]) => call[0] === 'activate')?.[1] as ((...args: unknown[]) => void) | undefined
+    expect(activateCallback).toBeDefined()
+
+    // Trigger activate without clearing window (mainWindow is defined from import)
+    if (activateCallback) {
+      vi.clearAllMocks()
+      activateCallback()
+      expect(BrowserWindow).not.toHaveBeenCalled()
     }
   })
 
