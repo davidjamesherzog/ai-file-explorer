@@ -18,6 +18,7 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],
+      include: ['src/**', 'src-electron/**'],
       exclude: [
         'node_modules/',
         'test/',
@@ -25,7 +26,13 @@ export default defineConfig({
         '**/*.config.*',
         '**/mockData',
         'dist/',
+        'src/quasar.d.ts',
+        'src/shims-vue.d.ts',
+        'src/env.d.ts',
+        '**/.DS_Store',
+        'src-electron/icons/**',
       ],
+      all: true,
     },
   },
   resolve: {
