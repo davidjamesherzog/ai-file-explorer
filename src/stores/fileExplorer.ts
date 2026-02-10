@@ -62,6 +62,13 @@ export const useFileExplorerStore = defineStore('fileExplorer', {
             break
         }
 
+        // If field comparison is equal, tie-break by name
+        if (comparison === 0) {
+          comparison = a.name.localeCompare(b.name, undefined, {
+            sensitivity: 'base',
+          })
+        }
+
         return this.sortOrder === 'asc' ? comparison : -comparison
       })
 
@@ -282,11 +289,11 @@ export const useFileExplorerStore = defineStore('fileExplorer', {
           }
         }
 
+        await this.refreshDirectory()
+
         if (errors.length > 0) {
           this.error = `Failed to delete some items:\n${errors.join('\n')}`
         }
-
-        await this.refreshDirectory()
       } catch (error) {
         this.error = `Failed to delete items: ${(error as Error).message}`
       } finally {
@@ -337,11 +344,11 @@ export const useFileExplorerStore = defineStore('fileExplorer', {
           }
         }
 
+        await this.refreshDirectory()
+
         if (errors.length > 0) {
           this.error = `Failed to copy some items:\n${errors.join('\n')}`
         }
-
-        await this.refreshDirectory()
       } catch (error) {
         this.error = `Failed to copy items: ${(error as Error).message}`
       } finally {
@@ -370,14 +377,15 @@ export const useFileExplorerStore = defineStore('fileExplorer', {
      * Set sort field and order
      */
     setSorting(field: SortField, order?: SortOrder) {
-      this.sortField = field
       if (order) {
+        this.sortField = field
         this.sortOrder = order
       } else {
         // Toggle order if same field
         if (this.sortField === field) {
           this.sortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc'
         } else {
+          this.sortField = field
           this.sortOrder = 'asc'
         }
       }
